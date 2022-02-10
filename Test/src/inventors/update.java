@@ -23,10 +23,10 @@ public class UpdateInv
 		String query = "update Actor set DateMort = ? where first_name = ?"; /*dans le cas ou l'inventeur n'est pas encore mort*/
 
 		try (Connection conn = this.connect();
-				PreparedStatement preparedStmt = conn.prepareStatement(query)){
-	    preparedStmt.setInt   (1, 2022);
-	    preparedStmt.setString(2, "Joe");
-	    preparedStmt.executeUpdate();
+				PreparedStatement pstmt = conn.prepareStatement(query)){
+	    pstmt.setInt   (1, 2022);
+	    pstmt.setString(2, "Joe");
+	    pstmt.executeUpdate();
 		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}

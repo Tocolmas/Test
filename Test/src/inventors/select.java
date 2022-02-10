@@ -22,8 +22,8 @@ public class SelectInv
 		String query = "select name, date, date2, nationalite, Entity id, firstname from Actor";
 
 		try (Connection conn = this.connect();
-				PreparedStatement preparedStmt = conn.prepareStatement(query)){
-		ResultSet rst = preparedStmt.executeQuery();
+				PreparedStatement pstmt = conn.prepareStatement(query)){
+		ResultSet rst = pstmt.executeQuery();
 		System.out.println("Id\t\tName\t\tAge\n");
 		while(rst.next()) {
 		   System.out.print(rst.getString(1));

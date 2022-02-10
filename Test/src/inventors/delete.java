@@ -19,7 +19,7 @@ public class DeleteInv
 	}
 
 	public void delete() {
-      String query = "delete from Actor where Entity id = ?";
+      String query = "delete name, date, date2, nationalite, Entity id, firstname from Actor where Entity id = ?";
 
       try (Connection conn = this.connect();
 	            PreparedStatement pstmt = conn.prepareStatement(query)) {

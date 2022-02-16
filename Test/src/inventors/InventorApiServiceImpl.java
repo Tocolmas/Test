@@ -15,8 +15,6 @@ import io.swagger.model.*;
 import java.io.File;
 import io.swagger.model.Inventor;
 import io.swagger.model.ModelApiResponse;
-import src.InsertInv;
-import src.String;
 
 import java.util.List;
 import io.swagger.api.NotFoundException;

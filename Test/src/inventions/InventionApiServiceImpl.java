@@ -73,22 +73,19 @@ public class InventionApiServiceImpl extends InventionApiService {
 
     @Override
     public Response findByDate( String date, SecurityContext securityContext) throws NotFoundException {
-String query = "select Commencement, Fin from Invention"; /*Pas sur de pouvoir daire ça*/
+      String query = "select Commencement, Fin from Invention"; /*Pas sur de pouvoir daire ça*/
 
-		try (Connection conn = this.connect();
+		  try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
-		ResultSet rst = preparedStmt.executeQuery();
-		System.out.println("tNomInvention\t\tEntity id\t\tFinie\t\tCommencement\t\tFin\n");
-		while(rst.next()) {
-			System.out.print(rst.getString(1));
-			System.out.print("\t\t\t\t"+rst.getInt(2));
-		    System.out.print("\t\t\t\t"+rst.getInt(3));
-		    System.out.print("\t\t\t\t"+rst.getString(4));
-		    System.out.print("\t\t\t\t"+rst.getString(5));
-		    System.out.println();
-		}}catch (SQLException e) {
-	        System.out.println(e.getMessage());
-		}
+		 ResultSet rst = preparedStmt.executeQuery();
+		 System.out.println("tNomInvention\t\tEntity id\t\tFinie\t\tCommencement\t\tFin\n");
+		 while(rst.next()) {
+			 System.out.print(rst.getString(1));
+			 System.out.print("\t\t\t\t"+rst.getInt(2));
+		   System.out.print("\t\t\t\t"+rst.getInt(3));
+		   System.out.print("\t\t\t\t"+rst.getString(4));
+		   System.out.print("\t\t\t\t"+rst.getString(5));
+		   System.out.println();
 		}}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
@@ -112,10 +109,7 @@ String query = "select Commencement, Fin from Invention"; /*Pas sur de pouvoir d
 		}}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
-		}}catch (SQLException e) {
-	        System.out.println(e.getMessage());
-		}
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
+    return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
     }
     @Override
     public Response findInventionBysByTags( @NotNull List<String> tags,  String date, SecurityContext securityContext) throws NotFoundException {
@@ -132,9 +126,6 @@ String query = "select Commencement, Fin from Invention"; /*Pas sur de pouvoir d
 		    System.out.print("\t\t\t\t"+rst.getString(4));
 		    System.out.print("\t\t\t\t"+rst.getString(5));
 		    System.out.println();
-		}}catch (SQLException e) {
-	        System.out.println(e.getMessage());
-		}
 		}}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}

@@ -36,7 +36,7 @@ public class InventionApiServiceImpl extends InventionApiService {
 	}
 	public void insert(String NomInvention, int Finie, String Commencement, String Fin) {
 	    String query = "INSERT INTO Invention(NomInvention, Finie, Commencement, Fin) VALUES(?,?,?,?)";
-	
+
 	    try (Connection conn = this.connect();
 	            PreparedStatement pstmt = conn.prepareStatement(query)) {
 	        pstmt.setString(1, NomInvention);
@@ -48,7 +48,7 @@ public class InventionApiServiceImpl extends InventionApiService {
 	        System.out.println(e.getMessage());
 	    }
 	}
-	
+
 	public Response addInvention(Invention invention, SecurityContext securityContext) throws NotFoundException {
 	    insert inv = new insert();
 	    // insert three new rows
@@ -60,7 +60,7 @@ public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response deleteInvention(Long inventionId, String apiKey, SecurityContext securityContext) throws NotFoundException {
     	String query = "delete from Invention where Entity id = ?";
-  
+
     	try (Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(query)) {
         pstmt.setString(1, "Atom");
@@ -73,8 +73,8 @@ public class InventionApiServiceImpl extends InventionApiService {
 
     @Override
     public Response findByDate( String date, SecurityContext securityContext) throws NotFoundException {
-String query = "select Commancement, Fin from Invention"; /*Pas sur de pouvoir daire ça*/
-		
+String query = "select Commencement, Fin from Invention"; /*Pas sur de pouvoir daire ça*/
+
 		try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -97,7 +97,7 @@ String query = "select Commancement, Fin from Invention"; /*Pas sur de pouvoir d
     @Override
     public Response findInventionByInventor( @NotNull List<String> inventor, SecurityContext securityContext) throws NotFoundException {
     	String query = "select Entity id from Actor, Invention WHERE Entity id.Actor = Entity id.Invention "; /*Pas sur de pouvoir daire ça*/
-		
+
 		try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -120,7 +120,7 @@ String query = "select Commancement, Fin from Invention"; /*Pas sur de pouvoir d
     @Override
     public Response findInventionBysByTags( @NotNull List<String> tags,  String date, SecurityContext securityContext) throws NotFoundException {
     	String query = "select Entity id from Invention, Feature WHERE Entity id.Invention = Entity id.Feature"; /*Pas sur de pouvoir daire ça*/
-		
+
 		try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -143,7 +143,7 @@ String query = "select Commancement, Fin from Invention"; /*Pas sur de pouvoir d
     @Override
     public Response findInventionsByStatus( @NotNull List<String> status, SecurityContext securityContext) throws NotFoundException {
     	String query = "select NomInvention from Invention, Status WHERE NomInvention.Invention = NomInvention.Status "; /*Pas sur de pouvoir faire ça*/
-		
+
 		try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -164,7 +164,7 @@ String query = "select Commancement, Fin from Invention"; /*Pas sur de pouvoir d
     @Override
     public Response getInventionById(Long inventionId, SecurityContext securityContext) throws NotFoundException {
     	String query = "select Entity id from Invention"; /*Pas sur de pouvoir daire ça*/
-		
+
 		try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -183,8 +183,8 @@ String query = "select Commancement, Fin from Invention"; /*Pas sur de pouvoir d
     }
     @Override
     public Response updateInvention(Invention body, SecurityContext securityContext) throws NotFoundException {
-    	String query = "update Invention set Fin = ? where NomInvention = ?"; 
-		
+    	String query = "update Invention set Fin = ? where NomInvention = ?";
+
 		try (Connection conn = this.connect();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 	    preparedStmt.setInt   (1, 2022);

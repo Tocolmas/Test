@@ -30,7 +30,7 @@ public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response addInvention(Invention body, SecurityContext securityContext) throws NotFoundException {
 	    String query = "INSERT INTO Invention(NomInvention, Status, Commencement, Fin) VALUES(?,?,?,?)";
-		
+
 	    try (Connection conn = ConnectionManager.getConnection();
 	            PreparedStatement pstmt = conn.prepareStatement(query)) {
 	        pstmt.setString(1, body.getName());
@@ -47,7 +47,7 @@ public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response deleteInvention(Long inventionId, String apiKey, SecurityContext securityContext) throws NotFoundException {
     	String query = "DELETE FROM Invention where Entity id = ?";
-    	  
+
     	try (Connection conn = ConnectionManager.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(query)) {
         pstmt.setLong(1, inventionId);
@@ -61,8 +61,8 @@ public class InventionApiServiceImpl extends InventionApiService {
 
     @Override
     public Response findByDate( String date, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin FROM Invention WHERE Commencement = ?"; 
-		
+    	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin FROM Invention WHERE Commencement = ?";
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -75,18 +75,19 @@ public class InventionApiServiceImpl extends InventionApiService {
 		    System.out.print("\t\t\t\t"+rst.getString(5));
 		    System.out.print("\t\t\t\t"+rst.getString(6));
 		    System.out.println();
-        rst.close();
-	    preparedStmt.close();
-		}}catch (SQLException e) {
+		}
+		    rst.close();
+		    preparedStmt.close();
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
     }
-  
+
     @Override
     public Response findInventionByInventor( @NotNull List<String> inventor, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin FROM Invention WHERE Entity id = ? UNION SELECT * FROM INVENTOR WHERE Entity id = ?";
-		
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -98,9 +99,10 @@ public class InventionApiServiceImpl extends InventionApiService {
 		    System.out.print("\t\t\t\t"+rst.getString(4));
 		    System.out.print("\t\t\t\t"+rst.getString(5));
 		    System.out.println();
+		}
 		    rst.close();
 		    preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
@@ -109,7 +111,7 @@ public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response findInventionBysByTags( @NotNull List<String> tags,  String date, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin FROM Invention WHERE Entity id = ?";
-		
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -121,9 +123,10 @@ public class InventionApiServiceImpl extends InventionApiService {
 		    System.out.print("\t\t\t\t"+rst.getString(4));
 		    System.out.print("\t\t\t\t"+rst.getString(5));
 		    System.out.println();
+		}
 		    rst.close();
 		    preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
@@ -131,8 +134,8 @@ public class InventionApiServiceImpl extends InventionApiService {
 
     @Override
     public Response findInventionsByName( @NotNull String name, SecurityContext securityContext) throws NotFoundException {
-  	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin from Invention WHERE NomInvention = ?"; 
-		
+  	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin from Invention WHERE NomInvention = ?";
+
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -144,9 +147,10 @@ public class InventionApiServiceImpl extends InventionApiService {
 		   System.out.print("\t\t\t\t\t"+rst.getString(4));
 		   System.out.print("\t\t\t\t\t"+rst.getString(5));
 		   System.out.println();
+		}
 		   rst.close();
 		   preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
@@ -155,7 +159,7 @@ public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response findInventionsByStatus( @NotNull List<String> status, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin FROM Invention WHERE Status = ?";
-		
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -167,9 +171,10 @@ public class InventionApiServiceImpl extends InventionApiService {
 		    System.out.print("\t\t\t\t"+rst.getString(4));
 		    System.out.print("\t\t\t\t"+rst.getString(5));
 		    System.out.println();
+		}
 		    rst.close();
 		    preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Invention, found!")).build();
@@ -178,7 +183,7 @@ public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response getInventionById(Long inventionId, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT NomInvention, Entity id, Status, Commencement, Fin FROM Invention WHERE Entity id = ?";
-		
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -190,9 +195,10 @@ public class InventionApiServiceImpl extends InventionApiService {
 		   System.out.print("\t\t\t\t"+rst.getString(4));
 		   System.out.print("\t\t\t\t"+rst.getString(5));
 		   System.out.println();
+		}
 		   rst.close();
 		   preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "invention found!")).build();
@@ -200,8 +206,8 @@ public class InventionApiServiceImpl extends InventionApiService {
 
     @Override
     public Response updateInvention(Invention body, SecurityContext securityContext) throws NotFoundException {
-       	String query = "UPDATE Invention SET NomInvention = ?, Status = ?, Commencement = ?, Fin = ? where NomInvention = ? AND Entity id = ?"; 
-		
+       	String query = "UPDATE Invention SET NomInvention = ?, Status = ?, Commencement = ?, Fin = ? where NomInvention = ? AND Entity id = ?";
+
     		try (Connection conn = ConnectionManager.getConnection();
     				PreparedStatement preparedStmt = conn.prepareStatement(query)){
     	    preparedStmt.setString(1, body.getName());

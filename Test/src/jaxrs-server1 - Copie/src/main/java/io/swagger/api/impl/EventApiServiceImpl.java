@@ -23,7 +23,7 @@ public class EventApiServiceImpl extends EventApiService {
     @Override
     public Response addevent(Event events, SecurityContext securityContext) throws NotFoundException {
     	String query = "INSERT INTO Event(NomEvent, DateDebut, DebutFin) VALUES(?)";
-    	
+
 	    try (Connection conn = ConnectionManager.getConnection(); // TODO verifier si on garde getConnection ici
 	         PreparedStatement pstmt = conn.prepareStatement(query)) {
 	        pstmt.setString(1, events.getName());
@@ -51,8 +51,8 @@ public class EventApiServiceImpl extends EventApiService {
     }
     @Override
     public Response eventfindByDate( String date, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT NomEvent, Event id, DateDebut, DateFin FROM Event WHERE DateDebut = ?"; 
-		
+    	String query = "SELECT NomEvent, Event id, DateDebut, DateFin FROM Event WHERE DateDebut = ?";
+
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -63,9 +63,10 @@ public class EventApiServiceImpl extends EventApiService {
 		   System.out.print("\t\t\t"+rst.getString(3));
 		   System.out.print("\t\t\t"+rst.getString(4));
 		   System.out.println();
+		}
 		   rst.close();
 		   preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
@@ -73,7 +74,7 @@ public class EventApiServiceImpl extends EventApiService {
     @Override
     public Response findEventsByInvention( @NotNull List<String> event, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT * FROM (SELECT NomEvent, Event id, DateDebut, DateFin FROM Event WHERE Event id = ? UNION SELECT Event id, Entity id FROM Participation WHERE Event id = ? and Enity id = ? UNION SELECT Entity id FROM Invention Where Entity id = ?";
-		
+
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -84,9 +85,10 @@ public class EventApiServiceImpl extends EventApiService {
 		   System.out.print("\t\t\t"+rst.getString(3));
 		   System.out.print("\t\t\t"+rst.getString(4));
 		   System.out.println();
+		}
 		   rst.close();
 		   preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "event found!")).build();
@@ -95,7 +97,7 @@ public class EventApiServiceImpl extends EventApiService {
     @Override
     public Response findEventsByInventor( @NotNull List<String> event, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT * FROM (SELECT NomEvent, Event id, DateDebut, DateFin FROM Event WHERE Event id = ? UNION SELECT Event id, Entity id FROM Participation WHERE Event id = ? and Enity id = ? UNION SELECT Entity id FROM Actor Where Entity id = ?";
-		
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -106,9 +108,10 @@ public class EventApiServiceImpl extends EventApiService {
 		   System.out.print("\t\t\t"+rst.getString(3));
 		   System.out.print("\t\t\t"+rst.getString(4));
 		   System.out.println();
+		}
 		   rst.close();
 		   preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "event found!")).build();
@@ -126,9 +129,10 @@ public class EventApiServiceImpl extends EventApiService {
 		   System.out.print("\t\t\t\t\t"+rst.getString(3));
 		   System.out.print("\t\t\t\t\t"+rst.getString(4));
 		   System.out.println();
+		}
 		   rst.close();
 		   preparedStmt.close();
-		}}catch (SQLException e) {
+		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "inventor found!")).build();
@@ -137,7 +141,7 @@ public class EventApiServiceImpl extends EventApiService {
     @Override
     public Response getEventById(Long eventId, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT NomEvent, Event id, DateDebut, DateFin FROM Event WHERE Event id = ?";
-		
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
@@ -161,8 +165,8 @@ public class EventApiServiceImpl extends EventApiService {
     }
     @Override
     public Response updateevent(Event events, SecurityContext securityContext) throws NotFoundException {
-    	String query = "UPDATE Event SET NomEvent = ?, DateDebut = ?, DateFin = ? where NomEvent = ? and Event id = ?"; 
-		
+    	String query = "UPDATE Event SET NomEvent = ?, DateDebut = ?, DateFin = ? where NomEvent = ? and Event id = ?";
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 	    preparedStmt.setString(1, events.getName());

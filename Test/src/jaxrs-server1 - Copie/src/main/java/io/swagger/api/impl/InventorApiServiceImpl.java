@@ -213,7 +213,30 @@ public class InventorApiServiceImpl extends InventorApiService {
     }
     @Override
     public Response uploadImage(Long inventorId, String additionalMetadata, InputStream fileInputStream, FormDataContentDisposition fileDetail, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
+       try {
+         FileInputStream fis;
+         int num_rows = 0;
+         File image = new File("C://User/tocol/OneDrive/Bureau/aa.jpg"); //(chemin du fichier, ici c'est un exemple)
+         fis = new FileInputStream (image);
+         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         byte[] buf = new byte[1024];
+         for (int readNum; (readNum -fis.read(buf)) != -1;) {
+           bos.write(buf, 0, readNum);
+         }
+         fis.close();
+         Connection conn = ConnectionManager.getConnection();
+         String query = ("INSERT INTO Photo (Photo id, NomEntity, Image) Values(?,?,?)");
+         PreparedStatement preparedStmt = conn.prepareStatement(query);
+         preparedStmt.setBytes(inventionId, bos.toByteArray()); // il y a un problème, je ne sais pas si on change inventionId en int au lieu de long ??
+
+         num_rows = preparedStmt.executeUpdate();
+         if (num_rows>0){
+           return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+             }
+             preparedStmt.close();
+             conn.close();
+     }catch (Exception er) {
+       System.out.println(er);}
+  }
 }
+s

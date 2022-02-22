@@ -18,7 +18,23 @@ import javax.validation.constraints.*;
 public class ImageApiServiceImpl extends ImageApiService {
     @Override
     public Response getImageById(Long fileId, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+      String query = "SELECT Photo id, NomEntity, Image from Photo WHERE Photo id = ?";
+
+      try (Connection conn = ConnectionManager.getConnection();
+          PreparedStatement preparedStmt = conn.prepareStatement(query)){
+      ResultSet rst = preparedStmt.executeQuery();
+      System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
+      while(rst.next()) {
+         System.out.print(rst.getLong(1));
+         System.out.print("\t\t\t\t\t"+rst.getString(2));
+         System.out.print("\t\t\t\t\t"+rst.getBlob(3));
+         System.out.println();
+      }
+         rst.close();
+         preparedStmt.close();
+      }catch (SQLException e) {
+            System.out.println(e.getMessage());
+      }
+      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
     }
 }

@@ -33,7 +33,6 @@ import javax.validation.constraints.*;
 public class InventorApiServiceImpl extends InventorApiService {
     @Override
     public Response addInventor(Inventor inventor, SecurityContext securityContext) throws NotFoundException {
-    	
     	String query = "INSERT INTO Actor(NomActor, DateNaissance, DateMort, Nationalite, PrenomActor, Status) VALUES(?,?,?,?,?,?)";
     	try (Connection conn = ConnectionManager.getConnection();
 	            PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -54,7 +53,7 @@ public class InventorApiServiceImpl extends InventorApiService {
     @Override
     public Response deleteInventor(Long inventorId, String apiKey, SecurityContext securityContext) throws NotFoundException {
         String query = "DELETE FROM Actor where Entity id = ?";
-        
+
         try (Connection conn = ConnectionManager.getConnection();
   	            PreparedStatement pstmt = conn.prepareStatement(query)) {
   	        pstmt.setLong(1, inventorId);
@@ -68,48 +67,56 @@ public class InventorApiServiceImpl extends InventorApiService {
 
     @Override
     public Response findInventorByInvention( @NotNull List<String> invention, SecurityContext securityContext) throws NotFoundException {
-		String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE Entity id = ? UNION SELECT * FROM Invention WHERE Entity id = ? ORDER BY Entity id"; 
+		String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE Entity id = ? UNION SELECT * FROM Invention WHERE Entity id = ? ORDER BY Entity id";
+		Inventor inv=new Inventor();
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
-		while(rst.next()) {
-		   System.out.print(rst.getString(1));
-		   System.out.print("\t\t\t\t\t"+rst.getString(2));
-		   System.out.print("\t\t\t\t\t"+rst.getString(3));
-		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
-		   System.out.print("\t\t\t\t\t"+rst.getString(5));
-		   System.out.print("\t\t\t\t\t"+rst.getString(6));
-		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-		   System.out.println();
-		}
+		rst.next();
+    	inv.setName(rst.getString(1));
+    	inv.setBorndate(rst.getString(2));
+    	inv.setDeathdate(rst.getString(3));
+    	inv.setId(rst.getLong(4));
+    	inv.setNationalite(rst.getString(5));
+    	inv.setFirstname(rst.getString(6));
+    	inv.setStatus(rst.getString(7));
+
+	   /*System.out.print(rst.getString(1));
+	   System.out.print("\t\t\t\t\t"+rst.getString(2));
+	   System.out.print("\t\t\t\t\t"+rst.getString(3));
+	   System.out.print("\t\t\t\t\t"+rst.getLong(4));
+	   System.out.print("\t\t\t\t\t"+rst.getString(5));
+	   System.out.print("\t\t\t\t\t"+rst.getString(6));
+	   System.out.print("\t\t\t\t\t"+rst.getString(7));
+	   System.out.println();*/
+
 		   rst.close();
 		   preparedStmt.close();
 		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
+		return Response.ok(inv).build();
 	}
 
     @Override
     public Response findInventorsByName( @NotNull String name, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE NomActor = ? and PrenomActor = ?";
+    	String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status FROM Actor WHERE NomActor = ? and PrenomActor = ?";
     	Inventor inv=new Inventor();
 
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
-		rst.next();  // go to first
-		
-	    	inv.setName(rst.getString(1));
-	    	inv.setBorndate(rst.getString(2));
-	    	inv.setDeathdate(rst.getString(3));
-	    	inv.setId(rst.getLong(4));
-	    	inv.setNationalite(rst.getString(5));
-	    	inv.setFirstname(rst.getString(6));
-	    	inv.setStatus(rst.getString(7));
-	    	
+		rst.next();
+		   inv.setName("Gates");
+	       inv.setBorndate(rst.getString(2));
+	       inv.setDeathdate(rst.getString(3));
+	       inv.setId(rst.getLong(4));
+	       inv.setNationalite(rst.getString(5));
+	       inv.setFirstname(rst.getString(6));
+	       inv.setStatus(rst.getString(7));
+
 		   /*System.out.print(rst.getString(1));
 		   System.out.print("\t\t\t\t\t"+rst.getString(2));
 		   System.out.print("\t\t\t\t\t"+rst.getString(3));
@@ -118,8 +125,10 @@ public class InventorApiServiceImpl extends InventorApiService {
 		   System.out.print("\t\t\t\t\t"+rst.getString(6));
 		   System.out.print("\t\t\t\t\t"+rst.getString(7));
 		   System.out.println();*/
+
 	   rst.close();
-		   preparedStmt.close();
+	   preparedStmt.close();
+
 		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
@@ -129,20 +138,28 @@ public class InventorApiServiceImpl extends InventorApiService {
     @Override
     public Response findInventorsByStatus( @NotNull String status, SecurityContext securityContext) throws NotFoundException {
     	String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE Status = ?";
+    	Inventor inv=new Inventor();
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
-		while(rst.next()) {
-		   System.out.print(rst.getString(1));
+		rst.next();
+	       inv.setName(rst.getString(1));
+	       inv.setBorndate(rst.getString(2));
+	       inv.setDeathdate(rst.getString(3));
+	       inv.setId(rst.getLong(4));
+	       inv.setNationalite(rst.getString(5));
+	       inv.setFirstname(rst.getString(6));
+	       inv.setStatus(rst.getString(7));
+
+		   /*System.out.print(rst.getString(1));
 		   System.out.print("\t\t\t\t\t"+rst.getString(2));
 		   System.out.print("\t\t\t\t\t"+rst.getString(3));
 		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
 		   System.out.print("\t\t\t\t\t"+rst.getString(5));
 		   System.out.print("\t\t\t\t\t"+rst.getString(6));
 		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-		   System.out.println();
-		}
+		   System.out.println();*/
 		   rst.close();
 		   preparedStmt.close();
 		}catch (SQLException e) {
@@ -153,58 +170,73 @@ public class InventorApiServiceImpl extends InventorApiService {
     @Override
     public Response getInventorById(Long inventorId, SecurityContext securityContext) throws NotFoundException {
        	String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE Entity id = ?";
-		
+       	Inventor inv=new Inventor();
        	try (Connection conn = ConnectionManager.getConnection();
     				PreparedStatement preparedStmt = conn.prepareStatement(query)){
     		ResultSet rst = preparedStmt.executeQuery();
     		System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
-    		while(rst.next()) {
-    		   System.out.print(rst.getString(1));
+    		rst.next();
+	 	       inv.setName(rst.getString(1));
+	 	       inv.setBorndate(rst.getString(2));
+	 	       inv.setDeathdate(rst.getString(3));
+	 	       inv.setId(rst.getLong(4));
+	 	       inv.setNationalite(rst.getString(5));
+	 	       inv.setFirstname(rst.getString(6));
+	 	       inv.setStatus(rst.getString(7));
+    		   /*System.out.print(rst.getString(1));
     		   System.out.print("\t\t\t\t\t"+rst.getString(2));
     		   System.out.print("\t\t\t\t\t"+rst.getString(3));
     		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
     		   System.out.print("\t\t\t\t\t"+rst.getString(5));
     		   System.out.print("\t\t\t\t\t"+rst.getString(6));
     		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-    		   System.out.println();
-    		}
+    		   System.out.println();*/
+
     		   rst.close();
     		   preparedStmt.close();
     		}catch (SQLException e) {
     	        System.out.println(e.getMessage());
     		}
-    		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
+       		return Response.ok(inv).build();
     	}
- 
+
     @Override
     public Response inventorfindByDate( String date, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE DateNaissance = ?"; 
-		
+    	String query = "SELECT NomActor, DateNaissance, DateMort, Entity id, Nationalite, PrenomActor, Status from Actor WHERE DateNaissance = ?";
+    	Inventor inv=new Inventor();
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
-		while(rst.next()) {
-		   System.out.print(rst.getString(1));
+		rst.next();
+	       inv.setName(rst.getString(1));
+	       inv.setBorndate(rst.getString(2));
+	       inv.setDeathdate(rst.getString(3));
+	       inv.setId(rst.getLong(4));
+	       inv.setNationalite(rst.getString(5));
+	       inv.setFirstname(rst.getString(6));
+	       inv.setStatus(rst.getString(7));
+
+		   /*System.out.print(rst.getString(1));
 		   System.out.print("\t\t\t\t\t"+rst.getString(2));
 		   System.out.print("\t\t\t\t\t"+rst.getString(3));
 		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
 		   System.out.print("\t\t\t\t\t"+rst.getString(5));
 		   System.out.print("\t\t\t\t\t"+rst.getString(6));
 		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-		   System.out.println();
-		}
+		   System.out.println();*/
+
 		   rst.close();
 		   preparedStmt.close();
 		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
+    	return Response.ok(inv).build();
 	}
 
     @Override
     public Response updateInventor(Inventor inventor, SecurityContext securityContext) throws NotFoundException {
-    	String query = "UPDATE Actor SET NomActor = ?, DateNaissance = ?, DateMort = ?, Nationalite = ?, PrenomActor = ?, Status = ? where Entity id = ?"; 
+    	String query = "UPDATE Actor SET NomActor = ?, DateNaissance = ?, DateMort = ?, Nationalite = ?, PrenomActor = ?, Status = ? where Entity id = ?";
     	try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 	    preparedStmt.setString(1, inventor.getName());
@@ -218,9 +250,9 @@ public class InventorApiServiceImpl extends InventorApiService {
     	}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor updated!")).build();
+    	return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
 	}
-    
+
     @Override
     public Response updateInventorWithForm(Long inventorId, String name, String status, SecurityContext securityContext) throws NotFoundException {
         // do some magic!

@@ -27,7 +27,7 @@ import javax.validation.constraints.*;
 public class EventApiServiceImpl extends EventApiService {
     @Override
     public Response addevent(Event events, SecurityContext securityContext) throws NotFoundException {
-    	String query = "INSERT INTO Event(NomEvent, DateDebut, DebutFin) VALUES(?)";
+    	String query = "INSERT INTO Event(NomEvent, DateDebut, DebutFin) VALUES(?,?,?)";
 
 	    try (Connection conn = ConnectionManager.getConnection(); // TODO verifier si on garde getConnection ici
 	         PreparedStatement pstmt = conn.prepareStatement(query)) {

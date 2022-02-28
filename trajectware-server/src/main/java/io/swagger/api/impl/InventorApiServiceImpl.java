@@ -260,7 +260,19 @@ public class InventorApiServiceImpl extends InventorApiService {
     }
     @Override
     public Response uploadImage(Long inventorId, String additionalMetadata, InputStream fileInputStream, FormDataContentDisposition fileDetail, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
+      String query = "INSERT INTO Photo (Image, Entity id) values (?, ?)";
+      String homeDir = System.getProperty("user.home");
+
+      try (Connection conn = ConnectionManager.getConnection();
+       PreparedStatement preparedStmt = conn.prepareStatement(query)){
+         // set parameters
+         preparedStmt.setBlob(3, filename);
+         preparedStmt.setLong(4, inventorId);
+
+         preparedStmt.execute();
+      }catch (SQLException e) {
+       System.out.println(e.getMessage());
+      }
+       return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+      }
 }

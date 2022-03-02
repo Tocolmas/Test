@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import io.swagger.api.*;
 import io.swagger.model.*;
@@ -34,7 +37,9 @@ public class InventorApiServiceImpl extends InventorApiService {
     @Override
     public Response addInventor(Inventor inventor, SecurityContext securityContext) throws NotFoundException {
     	String query = "INSERT INTO Inventor(Name, Birthdate, Deathdate, Nationalite, Firstname, Status) VALUES(?,?,?,?,?,?)";
-    	try (Connection conn = ConnectionManager.getConnection();
+    	
+    	Connection conn = ConnectionManager.getConnection();
+    	try (
 	            PreparedStatement pstmt = conn.prepareStatement(query)) {
 	        pstmt.setString(1, inventor.getName());
 	        pstmt.setString(2, inventor.getBirthdate());
@@ -45,7 +50,7 @@ public class InventorApiServiceImpl extends InventorApiService {
 	        pstmt.executeUpdate(); 
 	        pstmt.close();
 	    } catch (SQLException e) {
-	        System.out.println(e.getMessage());
+	        e.printStackTrace();
 	    }
     	return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "New inventor added")).build();
     }
@@ -60,7 +65,7 @@ public class InventorApiServiceImpl extends InventorApiService {
   	        pstmt.executeUpdate();
   	        pstmt.close();
   	    } catch (SQLException e) {
-  	        System.out.println(e.getMessage());
+  	        e.printStackTrace();
   	    }
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor deleted!")).build();
   	}
@@ -69,11 +74,12 @@ public class InventorApiServiceImpl extends InventorApiService {
     public Response findInventorByInvention( @NotNull List<String> invention, SecurityContext securityContext) throws NotFoundException {
 		String query = "SELECT Name, Birthdate, Deathdate, Nationalite, EntityId, Firstname, Status from Inventor WHERE EntityId = ? UNION SELECT * FROM Invention WHERE EntityId = ? ORDER BY EntityId.Inventor"; 
 		Inventor inv=new Inventor();
+		
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tName\t\tBirthdate\t\tDeathdate\t\tNationalite\t\tEntityId\t\tFirstname\t\tStatus\n");
-		rst.next(); 
+		rst.next();
     	inv.setName(rst.getString(1));
     	inv.setBirthdate(rst.getString(2));
     	inv.setDeathdate(rst.getString(3)); 
@@ -82,6 +88,14 @@ public class InventorApiServiceImpl extends InventorApiService {
     	inv.setFirstname(rst.getString(6));
     	inv.setStatus(rst.getString(7));
     	
+	    preparedStmt.setString(1, inv.getName());
+        preparedStmt.setString(2, inv.getBirthdate());
+        preparedStmt.setString(3, inv.getDeathdate());
+        preparedStmt.setString(4, inv.getNationalite());
+        preparedStmt.setLong(5, inv.getId());
+        preparedStmt.setString(6, inv.getFirstname());
+        preparedStmt.setString(7, inv.getFirstname());
+	
 	   /*System.out.print(rst.getString(1));
 	   System.out.print("\t\t\t\t\t"+rst.getString(2));
 	   System.out.print("\t\t\t\t\t"+rst.getString(3));
@@ -91,46 +105,56 @@ public class InventorApiServiceImpl extends InventorApiService {
 	   System.out.print("\t\t\t\t\t"+rst.getString(7));
 	   System.out.println();*/
 		
-		   rst.close();
-		   preparedStmt.close();
-		}catch (SQLException e) {
-	        System.out.println(e.getMessage());
-		}
-		return Response.ok(inv).build();
+	   //rst.close();
+	   //preparedStmt.close();
+	   }catch (SQLException e) {
+		   e.printStackTrace();
+	   }
+       return Response.ok(inv).build();
 	}
 
     @Override
     public Response findInventorsByName( @NotNull String name, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT Name, Birthdate, Deathdate, Nationalite, EntityId, Firstname, Status FROM Inventor WHERE Name = ? and Firstname = ?";
+    	String query = "SELECT Name, Birthdate, Deathdate, Nationalite, EntityId, Firstname, Status FROM Inventor WHERE Name = ?";
     	Inventor inv=new Inventor();
     	
-    	try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement preparedStmt = conn.prepareStatement(query)){
+    	Connection conn = ConnectionManager.getConnection();
+    	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
+    	preparedStmt.setString(1, name);
+
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tName\t\tBirthdate\t\tDeathdate\t\tNationalite\t\tEntityId\t\tFirstname\t\tStatus\n");
 		rst.next();
-		   inv.setName("Gates");
-	       inv.setBirthdate(rst.getString(2));
-	       inv.setDeathdate(rst.getString(3));
-	       inv.setNationalite(rst.getString(4));
-	       inv.setId(rst.getLong(5));
-	       inv.setFirstname(rst.getString(6));
-	       inv.setStatus(rst.getString(7));
-	       
-		   /*System.out.print(rst.getString(1));
-		   System.out.print("\t\t\t\t\t"+rst.getString(2));
-		   System.out.print("\t\t\t\t\t"+rst.getString(3));
-		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
-		   System.out.print("\t\t\t\t\t"+rst.getString(5));
-		   System.out.print("\t\t\t\t\t"+rst.getString(6));
-		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-		   System.out.println();*/
+	    inv.setName(rst.getString(1));
+        inv.setBirthdate(rst.getString(2));
+        inv.setDeathdate(rst.getString(3));
+        inv.setNationalite(rst.getString(4));
+        inv.setId(rst.getLong(5));
+        inv.setFirstname(rst.getString(6));
+        inv.setStatus(rst.getString(7));
+ /*       
+        preparedStmt.setString(1, inv.getName());
+        preparedStmt.setString(2, inv.getBirthdate());
+        preparedStmt.setString(3, inv.getDeathdate());
+        preparedStmt.setString(4, inv.getNationalite());
+        preparedStmt.setLong(5, inv.getId());
+        preparedStmt.setString(6, inv.getFirstname());
+        preparedStmt.setString(7, inv.getFirstname());
+	*/       
+	    System.out.print(rst.getString(1));
+	    System.out.print("\t\t\t\t\t"+rst.getString(2));
+	    System.out.print("\t\t\t\t\t"+rst.getString(3));
+	    System.out.print("\t\t\t\t\t"+rst.getLong(4));
+	    System.out.print("\t\t\t\t\t"+rst.getString(5));
+	    System.out.print("\t\t\t\t\t"+rst.getString(6));
+	    System.out.print("\t\t\t\t\t"+rst.getString(7));
+	    System.out.println();
 		   
-	   rst.close();
-	   preparedStmt.close();
+//	    rst.close();
+//	    preparedStmt.close();
 	   
 		}catch (SQLException e) {
-	        System.out.println(e.getMessage());
+	        e.printStackTrace();
 		}
     	return Response.ok(inv).build();
     }
@@ -144,24 +168,32 @@ public class InventorApiServiceImpl extends InventorApiService {
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tNomActor\t\tDateNaissance\t\tDateMort\t\tEntity id\t\tNationalite\t\tPrenomActor\t\tStatus\n");
 		rst.next();
-	       inv.setName(rst.getString(1));
-	       inv.setBirthdate(rst.getString(2));
-	       inv.setDeathdate(rst.getString(3));
-	       inv.setId(rst.getLong(4));
-	       inv.setNationalite(rst.getString(5));
-	       inv.setFirstname(rst.getString(6));
-	       inv.setStatus(rst.getString(7));
-	       
-		   /*System.out.print(rst.getString(1));
-		   System.out.print("\t\t\t\t\t"+rst.getString(2));
-		   System.out.print("\t\t\t\t\t"+rst.getString(3));
-		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
-		   System.out.print("\t\t\t\t\t"+rst.getString(5));
-		   System.out.print("\t\t\t\t\t"+rst.getString(6));
-		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-		   System.out.println();*/
-		   rst.close();
-		   preparedStmt.close();
+        inv.setName(rst.getString(1));
+        inv.setBirthdate(rst.getString(2));
+        inv.setDeathdate(rst.getString(3));
+        inv.setId(rst.getLong(4));
+        inv.setNationalite(rst.getString(5));
+        inv.setFirstname(rst.getString(6));
+        inv.setStatus(rst.getString(7));
+       
+        preparedStmt.setString(1, inv.getName());
+        preparedStmt.setString(2, inv.getBirthdate());
+        preparedStmt.setString(3, inv.getDeathdate());
+        preparedStmt.setString(4, inv.getNationalite());
+        preparedStmt.setLong(5, inv.getId());
+        preparedStmt.setString(6, inv.getFirstname());
+        preparedStmt.setString(7, inv.getFirstname());
+        
+	    /*System.out.print(rst.getString(1));
+	    System.out.print("\t\t\t\t\t"+rst.getString(2));
+	    System.out.print("\t\t\t\t\t"+rst.getString(3));
+	    System.out.print("\t\t\t\t\t"+rst.getLong(4));
+	    System.out.print("\t\t\t\t\t"+rst.getString(5));
+	    System.out.print("\t\t\t\t\t"+rst.getString(6));
+	    System.out.print("\t\t\t\t\t"+rst.getString(7));
+	    System.out.println();*/
+	   rst.close();
+	   preparedStmt.close();
 		}catch (SQLException e) {
 	        System.out.println(e.getMessage());
 		}
@@ -176,24 +208,33 @@ public class InventorApiServiceImpl extends InventorApiService {
     		ResultSet rst = preparedStmt.executeQuery();
     		System.out.println("tName\t\tBirthdate\t\tDeathdate\t\tNationalite\t\tEntityId\t\tFirstname\t\tStatus\n");
     		rst.next(); 
-	 	       inv.setName(rst.getString(1));
-	 	       inv.setBirthdate(rst.getString(2));
-	 	       inv.setDeathdate(rst.getString(3));
-	 	       inv.setNationalite(rst.getString(4));
-	 	       inv.setId(rst.getLong(5));
-	 	       inv.setFirstname(rst.getString(6));
-	 	       inv.setStatus(rst.getString(7));
-    		   /*System.out.print(rst.getString(1));
-    		   System.out.print("\t\t\t\t\t"+rst.getString(2));
-    		   System.out.print("\t\t\t\t\t"+rst.getString(3));
-    		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
-    		   System.out.print("\t\t\t\t\t"+rst.getString(5));
-    		   System.out.print("\t\t\t\t\t"+rst.getString(6));
-    		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-    		   System.out.println();*/
-    		
-    		   rst.close();
-    		   preparedStmt.close();
+ 	        inv.setName(rst.getString(1));
+ 	        inv.setBirthdate(rst.getString(2));
+ 	        inv.setDeathdate(rst.getString(3));
+ 	        inv.setNationalite(rst.getString(4));
+ 	        inv.setId(rst.getLong(5));
+ 	        inv.setFirstname(rst.getString(6));
+ 	        inv.setStatus(rst.getString(7));
+ 	        
+ 	       preparedStmt.setString(1, inv.getName());
+ 	        preparedStmt.setString(2, inv.getBirthdate());
+ 	        preparedStmt.setString(3, inv.getDeathdate());
+ 	        preparedStmt.setString(4, inv.getNationalite());
+ 	        preparedStmt.setLong(5, inv.getId());
+ 	        preparedStmt.setString(6, inv.getFirstname());
+ 	        preparedStmt.setString(7, inv.getFirstname());
+ 	        
+		    /*System.out.print(rst.getString(1));
+		    System.out.print("\t\t\t\t\t"+rst.getString(2));
+		    System.out.print("\t\t\t\t\t"+rst.getString(3));
+		    System.out.print("\t\t\t\t\t"+rst.getLong(4));
+		    System.out.print("\t\t\t\t\t"+rst.getString(5));
+		    System.out.print("\t\t\t\t\t"+rst.getString(6));
+		    System.out.print("\t\t\t\t\t"+rst.getString(7));
+		    System.out.println();*/
+		
+		   rst.close();
+		   preparedStmt.close();
     		}catch (SQLException e) {
     	        System.out.println(e.getMessage());
     		}
@@ -209,22 +250,30 @@ public class InventorApiServiceImpl extends InventorApiService {
 		ResultSet rst = preparedStmt.executeQuery();
 		System.out.println("tName\t\tBirthdate\t\tDeathdate\t\tNationalite\t\tEntityId\t\tFirstname\t\tStatus\n");
 		rst.next();
-	       inv.setName(rst.getString(1));
-	       inv.setBirthdate(rst.getString(2));
-	       inv.setDeathdate(rst.getString(3));
-	       inv.setNationalite(rst.getString(4));
-	       inv.setId(rst.getLong(5));
-	       inv.setFirstname(rst.getString(6));
-	       inv.setStatus(rst.getString(7));
-	       
-		   /*System.out.print(rst.getString(1));
-		   System.out.print("\t\t\t\t\t"+rst.getString(2));
-		   System.out.print("\t\t\t\t\t"+rst.getString(3));
-		   System.out.print("\t\t\t\t\t"+rst.getLong(4));
-		   System.out.print("\t\t\t\t\t"+rst.getString(5));
-		   System.out.print("\t\t\t\t\t"+rst.getString(6));
-		   System.out.print("\t\t\t\t\t"+rst.getString(7));
-		   System.out.println();*/
+        inv.setName(rst.getString(1));
+        inv.setBirthdate(rst.getString(2));
+        inv.setDeathdate(rst.getString(3));
+        inv.setNationalite(rst.getString(4));
+        inv.setId(rst.getLong(5));
+        inv.setFirstname(rst.getString(6));
+        inv.setStatus(rst.getString(7));
+       
+        preparedStmt.setString(1, inv.getName());
+        preparedStmt.setString(2, inv.getBirthdate());
+        preparedStmt.setString(3, inv.getDeathdate());
+        preparedStmt.setString(4, inv.getNationalite());
+        preparedStmt.setLong(5, inv.getId());
+        preparedStmt.setString(6, inv.getFirstname());
+        preparedStmt.setString(7, inv.getFirstname());
+        
+ 	    /*System.out.print(rst.getString(1));
+ 	    System.out.print("\t\t\t\t\t"+rst.getString(2));
+	    System.out.print("\t\t\t\t\t"+rst.getString(3));
+	    System.out.print("\t\t\t\t\t"+rst.getLong(4));
+	    System.out.print("\t\t\t\t\t"+rst.getString(5));
+	    System.out.print("\t\t\t\t\t"+rst.getString(6));
+	    System.out.print("\t\t\t\t\t"+rst.getString(7));
+	    System.out.println();*/
 		
 		   rst.close();
 		   preparedStmt.close();
@@ -260,19 +309,34 @@ public class InventorApiServiceImpl extends InventorApiService {
     }
     @Override
     public Response uploadImage(Long inventorId, String additionalMetadata, InputStream fileInputStream, FormDataContentDisposition fileDetail, SecurityContext securityContext) throws NotFoundException {
-   	 String query = "INSERT INTO Photo (Image, Entity id) values (?, ?)";
-	    String homeDir = System.getProperty("user.home"); 
-
-	    try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement preparedStmt = conn.prepareStatement(query)){
-	        // set parameters
-	        preparedStmt.setBlob(3, filename);
-	        preparedStmt.setLong(4, inventorId);
-
-	        preparedStmt.execute();
-	    }catch (SQLException e) {
-	    	System.out.println(e.getMessage());
-     }
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
+   	 String query = "INSERT INTO Photo(Image, PhotoId) values (?,?)";
+     String homeDir = System.getProperty("user.home"); 
+     String filename = "inventor-"+inventorId+".jpg";
+     File file=new File("images",filename);
+     Connection conn = ConnectionManager.getConnection();
+     try (   FileOutputStream fout=new FileOutputStream(file);
+	 		 PreparedStatement preparedStmt = conn.prepareStatement(query)){
+         // set parameters
+         preparedStmt.setString(1, filename);
+         preparedStmt.setLong(2, inventorId);       
+         preparedStmt.execute();
+         
+         // read stream into file
+         int BUFF_SIZE=1024;
+         byte[] buff=new byte[BUFF_SIZE];
+         int read;
+         while((read=fileInputStream.read(buff))!=-1) {
+        	 fout.write(buff,0,read);
+         }
+     }catch (SQLException e) {
+    	e.printStackTrace();
+  } catch (FileNotFoundException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+     return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+  }
 }

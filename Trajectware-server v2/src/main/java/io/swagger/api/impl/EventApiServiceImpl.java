@@ -67,6 +67,11 @@ public class EventApiServiceImpl extends EventApiService {
 		eve.setStartdate(rst.getString(3));
 		eve.setEnddate(rst.getString(4));
 		
+		preparedStmt.setString(1, eve.getName());
+		preparedStmt.setLong(2, eve.getId());
+        preparedStmt.setString(3, eve.getStartdate());
+        preparedStmt.setString(4, eve.getEnddate());
+		
 	    /*System.out.print("\t\t\t"+rst.getString(1));
 	    System.out.print("\t\t\t"+rst.getLong(2));
 	    System.out.print("\t\t\t"+rst.getString(3));
@@ -93,6 +98,11 @@ public class EventApiServiceImpl extends EventApiService {
 		eve.setId(rst.getLong(2));
 		eve.setStartdate(rst.getString(3));
 		eve.setEnddate(rst.getString(4));
+		
+		preparedStmt.setString(1, eve.getName());
+		preparedStmt.setLong(2, eve.getId());
+        preparedStmt.setString(3, eve.getStartdate());
+        preparedStmt.setString(4, eve.getEnddate());
 		
 	    /*System.out.print("\t\t\t"+rst.getString(1));
 	    System.out.print("\t\t\t"+rst.getLong(2));
@@ -121,6 +131,11 @@ public class EventApiServiceImpl extends EventApiService {
 		eve.setStartdate(rst.getString(3));
 		eve.setEnddate(rst.getString(4));
 		
+		preparedStmt.setString(1, eve.getName());
+		preparedStmt.setLong(2, eve.getId());
+        preparedStmt.setString(3, eve.getStartdate());
+        preparedStmt.setString(4, eve.getEnddate());
+        
 	    /*System.out.print("\t\t\t"+rst.getString(1));
 	    System.out.print("\t\t\t"+rst.getLong(2));
 	    System.out.print("\t\t\t"+rst.getString(3));
@@ -148,6 +163,11 @@ public class EventApiServiceImpl extends EventApiService {
 		eve.setStartdate(rst.getString(3));
 		eve.setEnddate(rst.getString(4));
 		
+		preparedStmt.setString(1, eve.getName());
+		preparedStmt.setLong(2, eve.getId());
+        preparedStmt.setString(3, eve.getStartdate());
+        preparedStmt.setString(4, eve.getEnddate());
+        
 	    /*System.out.print("\t\t\t"+rst.getString(1));
 	    System.out.print("\t\t\t"+rst.getLong(2));
 	    System.out.print("\t\t\t"+rst.getString(3));
@@ -175,6 +195,11 @@ public class EventApiServiceImpl extends EventApiService {
 		eve.setStartdate(rst.getString(3));
 		eve.setEnddate(rst.getString(4));
 		
+		preparedStmt.setString(1, eve.getName());
+		preparedStmt.setLong(2, eve.getId());
+        preparedStmt.setString(3, eve.getStartdate());
+        preparedStmt.setString(4, eve.getEnddate());
+        
 	    /*System.out.print("\t\t\t"+rst.getString(1));
 	    System.out.print("\t\t\t"+rst.getLong(2));
 	    System.out.print("\t\t\t"+rst.getString(3));

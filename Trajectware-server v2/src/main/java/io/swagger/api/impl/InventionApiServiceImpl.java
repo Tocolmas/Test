@@ -31,7 +31,7 @@ import javax.validation.constraints.*;
 public class InventionApiServiceImpl extends InventionApiService {
     @Override
     public Response addInvention(Invention body, SecurityContext securityContext) throws NotFoundException {
-    	 String query = "INSERT INTO Invention(Name, Status, Sartdate, Finsihdate) VALUES(?,?,?,?)";
+    	 String query = "INSERT INTO Invention(Name, Status, Startdate, Finsihdate) VALUES(?,?,?,?)";
  		
  	    try (Connection conn = ConnectionManager.getConnection();
  	            PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -295,11 +295,11 @@ public class InventionApiServiceImpl extends InventionApiService {
 	     }*/
     	 String query = "INSERT INTO Photo (Image, Entity id) values (?, ?)";
     	    String homeDir = System.getProperty("user.home"); 
-
+    	    String filename = null;
     	    try (Connection conn = ConnectionManager.getConnection();
 					PreparedStatement preparedStmt = conn.prepareStatement(query)){
     	        // set parameters
-    	        preparedStmt.setBlob(3, filename);
+    	        preparedStmt.setString(3, filename);
     	        preparedStmt.setLong(4, inventionId);
 
     	        preparedStmt.execute();

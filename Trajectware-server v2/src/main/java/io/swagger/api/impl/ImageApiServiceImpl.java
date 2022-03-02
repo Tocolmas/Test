@@ -25,7 +25,7 @@ import javax.validation.constraints.*;
 public class ImageApiServiceImpl extends ImageApiService {
     @Override
     public Response getImageById(Long fileId, SecurityContext securityContext) throws NotFoundException {
-      String query = "SELECT Photo id, NomEntity, Image from Photo WHERE Photo id = ?";
+      String query = "SELECT * FROM Photo WHERE PhotoId = ?";
       File fi = new File();
       try (Connection conn = ConnectionManager.getConnection();
           PreparedStatement preparedStmt = conn.prepareStatement(query)){
@@ -37,7 +37,7 @@ public class ImageApiServiceImpl extends ImageApiService {
       System.out.print("\t\t\t\t\t"+rst.getString(2));
       System.out.print("\t\t\t\t\t"+rst.getBlob(3));
       System.out.println();*/
-
+  
       rst.close();
       preparedStmt.close();
       }catch (SQLException e) {
@@ -46,3 +46,4 @@ public class ImageApiServiceImpl extends ImageApiService {
       return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
     }
 }
+

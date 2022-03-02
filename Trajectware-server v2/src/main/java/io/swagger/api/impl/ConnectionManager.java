@@ -24,6 +24,5 @@ public class ConnectionManager {
 	public static Connection getConnection() {
 		if (conn==null) conn=createConnection();
 		return conn;
-		
 	}
 }

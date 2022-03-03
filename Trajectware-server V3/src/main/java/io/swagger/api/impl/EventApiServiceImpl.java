@@ -32,7 +32,7 @@ public class EventApiServiceImpl extends EventApiService {
 	        pstmt.setString(2, events.getStartdate());
 	        pstmt.setString(3, events.getEnddate());
 	        pstmt.executeUpdate();
-	        //pstmt.close();
+	        pstmt.close();
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
@@ -46,15 +46,15 @@ public class EventApiServiceImpl extends EventApiService {
     	try (PreparedStatement pstmt = conn.prepareStatement(query)) {
   	        pstmt.setLong(1, eventId);
   	        pstmt.executeUpdate();
-  	        //pstmt.close();
+  	        pstmt.close();
   	    } catch (SQLException e) {
   	        e.printStackTrace();
   	    }
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "event deleted!")).build();
     }
-    @Override 
+    @Override
     public Response eventfindByDate( String date, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT Name, EventId, Startdate, Enddate FROM Event WHERE Startdate = ?"; 
+    	String query = "SELECT Name, EventId, Startdate, Enddate FROM Event WHERE Startdate = ?";
 		Event eve = new Event();
 		Connection conn = ConnectionManager.getConnection();
     	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
@@ -66,13 +66,13 @@ public class EventApiServiceImpl extends EventApiService {
 			eve.setId(rst.getLong(2));
 			eve.setStartdate(rst.getString(3));
 			eve.setEnddate(rst.getString(4));
-					
+
 		    System.out.print("\t\t\t"+rst.getString(1));
 		    System.out.print("\t\t\t"+rst.getLong(2));
 		    System.out.print("\t\t\t"+rst.getString(3));
 		    System.out.print("\t\t\t"+rst.getString(4));
 		    System.out.println();
-	
+
 		    //rst.close();
 		    //preparedStmt.close();
 			}catch (SQLException e) {
@@ -93,13 +93,13 @@ public class EventApiServiceImpl extends EventApiService {
 		eve.setId(rst.getLong(2));
 		eve.setStartdate(rst.getString(3));
 		eve.setEnddate(rst.getString(4));
-		
+
 	    System.out.print("\t\t\t"+rst.getString(1));
 	    System.out.print("\t\t\t"+rst.getLong(2));
 	    System.out.print("\t\t\t"+rst.getString(3));
 	    System.out.print("\t\t\t"+rst.getString(4));
 	    System.out.println();
-	
+
 	    //rst.close();
 	    //preparedStmt.close();
 		}catch (SQLException e) {
@@ -126,7 +126,7 @@ public class EventApiServiceImpl extends EventApiService {
 	    System.out.print("\t\t\t"+rst.getString(3));
 	    System.out.print("\t\t\t"+rst.getString(4));
 	    System.out.println();
-	
+
 //	    rst.close();
 //	    preparedStmt.close();
 		}catch (SQLException e) {
@@ -134,9 +134,9 @@ public class EventApiServiceImpl extends EventApiService {
 		}
 		return Response.ok(eve).build();
     }
-    @Override 
+    @Override
     public Response findEventsByName( @NotNull String name, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT Name, EventId, Startdebut, Enddate FROM Event WHERE Name = ?";
+    	String query = "SELECT Name, EventId, Startdate, Enddate FROM Event WHERE Name = ?";
     	Event eve = new Event();
     	Connection conn = ConnectionManager.getConnection();
     	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
@@ -148,13 +148,13 @@ public class EventApiServiceImpl extends EventApiService {
 			eve.setId(rst.getLong(2));
 			eve.setStartdate(rst.getString(3));
 			eve.setEnddate(rst.getString(4));
-		
+
 		    System.out.print("\t\t\t"+rst.getString(1));
 		    System.out.print("\t\t\t"+rst.getLong(2));
 		    System.out.print("\t\t\t"+rst.getString(3));
 		    System.out.print("\t\t\t"+rst.getString(4));
 		    System.out.println();
-		
+
 		    //rst.close();
 		    //preparedStmt.close();
 			}catch (SQLException e) {
@@ -182,7 +182,7 @@ public class EventApiServiceImpl extends EventApiService {
 		    System.out.print("\t\t\t"+rst.getString(3));
 		    System.out.print("\t\t\t"+rst.getString(4));
 		    System.out.println();
-		
+
 		    //rst.close();
 		    //preparedStmt.close();
 			}catch (SQLException e) {
@@ -197,8 +197,8 @@ public class EventApiServiceImpl extends EventApiService {
     }
     @Override
     public Response updateevent(Event events, SecurityContext securityContext) throws NotFoundException {
-    	String query = "UPDATE Event SET Name = ?, Startdate = ?, Enddate = ? WHERE EventId = ?"; 
-		
+    	String query = "UPDATE Event SET Name = ?, Startdate = ?, Enddate = ? WHERE EventId = ?";
+
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement preparedStmt = conn.prepareStatement(query)){
 	    preparedStmt.setString(1, events.getName());

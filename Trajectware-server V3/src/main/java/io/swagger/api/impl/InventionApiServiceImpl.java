@@ -311,7 +311,9 @@ public class InventionApiServiceImpl extends InventionApiService {
             builder.entity(ConnectionManager.buildException(e));
             return builder.build();
 		}
-	   	checkValidDate(body.getStartdate());
+		assert body.getName() != null;
+		assert body.getStartdate() != null;
+	  checkValidDate(body.getStartdate());
 		checkValidDate(body.getFinsihdate());
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }

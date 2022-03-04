@@ -321,7 +321,9 @@ public class InventorApiServiceImpl extends InventorApiService {
             builder.entity(ConnectionManager.buildException(e));
             return builder.build();
 		}
-    	return Response.ok().entity(inventor).build();
+        checkValidDate(inventor.getBirthdate());
+        checkValidDate(inventor.getDeathdate());
+    	return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
 	}
 
     @Override
@@ -335,6 +337,7 @@ public class InventorApiServiceImpl extends InventorApiService {
      String homeDir = System.getProperty("user.home");
      String filename = "inventor-"+inventorId+".jpg";
      File file=new File("images",filename);
+     assert inventorId != null;
      Connection conn = ConnectionManager.getConnection();
      try (   FileOutputStream fout=new FileOutputStream(file);
 	 		 PreparedStatement preparedStmt = conn.prepareStatement(query)){

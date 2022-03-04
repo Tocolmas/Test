@@ -27,6 +27,7 @@ public class ImageApiServiceImpl extends ImageApiService {
     public Response getImageById(Long fileId, SecurityContext securityContext) throws NotFoundException {
       String query = "SELECT * FROM Photo WHERE PhotoId = ?";
       File fi = new File();
+      assert fileId != null;
       Connection conn = ConnectionManager.getConnection();
       try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
     	  preparedStmt.setLong(1, fileId);
@@ -38,13 +39,10 @@ public class ImageApiServiceImpl extends ImageApiService {
 	      System.out.print("\t\t\t"+rst.getString(2));
 	      System.out.print("\t\t\t"+rst.getBlob(3));
 	      System.out.println();
-	  
-	      //rst.close();
-	      //preparedStmt.close();
+
 	      }catch (SQLException e) {
 	            System.out.println(e.getMessage());
 	      }
 	      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
 	    }
 	}
-	

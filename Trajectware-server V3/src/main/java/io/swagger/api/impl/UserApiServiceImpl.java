@@ -22,29 +22,42 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response adduser(User body, SecurityContext securityContext) throws NotFoundException {
 		String query = "INSERT INTO User(Username, UserId, FirstName, LastName, Email, Phone, Password) VALUES(?,?,?,?,?,?;?)";
-		    	
-		    	Connection conn = ConnectionManager.getConnection();
-		    	try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-			        pstmt.setString(1, body.getUsername());
-			        pstmt.setLong(2, body.getId());
-			        pstmt.setString(3, body.getFirstName());
-			        pstmt.setString(4, body.getLastName());
-			        pstmt.setString(5, body.getEmail());
-			        pstmt.setString(6, body.getPhone());
-			        pstmt.setString(7, body.getPassword());
-			        pstmt.executeUpdate(); 
-			        pstmt.close();
-			    } catch (SQLException e) {
-			        e.printStackTrace();
-			    }
-		        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-		    }
+        assert body.getUsername() == null;
+        assert body.getId() == null;
+        assert body.getFirstName() == null;
+        assert body.getLastName() == null;
+        assert body.getEmail() == null;
+        assert body.getPhone() == null;
+        assert body.getPassword() == null;
+    	Connection conn = ConnectionManager.getConnection();
+    	long id=ConnectionManager.createId("User");
+        body.setId(id);
+    	try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+	        pstmt.setString(1, body.getUsername());
+	        pstmt.setLong(2, body.getId());
+	        pstmt.setString(3, body.getFirstName());
+	        pstmt.setString(4, body.getLastName());
+	        pstmt.setString(5, body.getEmail());
+	        pstmt.setString(6, body.getPhone());
+	        pstmt.setString(7, body.getPassword());
+	        pstmt.executeUpdate();
+	        pstmt.close();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+    	 assert body.getUsername() != null && !body.getUsername().trim().isEmpty();
+         assert body.getFirstName() != null && !body.getFirstName().trim().isEmpty();
+         assert body.getLastName() != null && !body.getLastName().trim().isEmpty();
+         assert body.getPassword() != null && !body.getPassword().trim().isEmpty();
+    	return Response.ok().entity(body).build();
+    }
     @Override
     public Response deleteUser(String username, SecurityContext securityContext) throws NotFoundException {
-       	String query = "DELETE FROM User WHERE UserId = ?";
+       	String query = "DELETE FROM User WHERE username = ?";
+       	assert username != null;
     	Connection conn = ConnectionManager.getConnection();
     	try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-		    pstmt.setString(1, null);
+		    pstmt.setString(1, username);
 		    pstmt.executeUpdate();
 	    	} catch (SQLException e) {
 		    e.printStackTrace();
@@ -54,14 +67,15 @@ public class UserApiServiceImpl extends UserApiService {
 
     @Override
     public Response getUserByName(String username, SecurityContext securityContext) throws NotFoundException {
-    	String query = "SELECT Username, UserId, FirstName, LastName, Email, Phone, Password FROM User WHERE Username = ?"; 
+    	String query = "SELECT Username, UserId, FirstName, LastName, Email, Phone, Password FROM User WHERE Username = ?";
 		User usr = new User();
+		assert username != null;
 		Connection conn = ConnectionManager.getConnection();
     	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
     		preparedStmt.setString(1, username);
 			ResultSet rst = preparedStmt.executeQuery();
-			System.out.println("tUsername\t\tUserid\t\tDateCreation\n");
-			rst.next(); 
+			//System.out.println("tUsername\t\tUserid\t\tDateCreation\n");
+			rst.next();
 			usr.setUsername(rst.getString(1));
 			usr.setId(rst.getLong(2));
 			usr.setFirstName(rst.getString(3));
@@ -69,26 +83,42 @@ public class UserApiServiceImpl extends UserApiService {
 			usr.setEmail(rst.getString(5));
 			usr.setPhone(rst.getString(6));
 			usr.setPassword(rst.getString(7));
-			
-		   System.out.print("\t\t"+rst.getString(1));
+
+		   /*System.out.print("\t\t"+rst.getString(1));
 		   System.out.print("\t\t"+rst.getLong(2));
 		   System.out.print("\t\t"+rst.getString(3));
 		   System.out.print("\t\t"+rst.getString(4));
 		   System.out.print("\t\t"+rst.getString(5));
 		   System.out.print("\t\t"+rst.getString(6));
 		   System.out.print("\t\t"+rst.getString(7));
-		   System.out.println();
+		   System.out.println();*/
+
 			}catch (SQLException e) {
 		        e.printStackTrace();
 			}
-	        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    	assert username == usr.getUsername();
+    	return Response.ok().entity(usr).build();
 	    }
 
     @Override
-    public Response loginUser( @NotNull String username,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
+    public Response loginUser( @NotNull String username,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {		Connection conn = ConnectionManager.getConnection();
+		String query = "SELECT * FROM User WHERE username=? and password=?";
+		Boolean status = false;
+		Connection conn = ConnectionManager.getConnection();
+		try {
+			PreparedStatement login = conn.prepareStatement(query);
+			login.setString(1, username);
+			login.setString(2, password);
+			ResultSet rst = login.executeQuery();
+			status = rst.next();
+
+		 } catch (SQLException e) {
+			 e.printStackTrace();
+			}
+	    return Response.ok().entity(status).build();
+
+	}
+
     @Override
     public Response logoutUser(SecurityContext securityContext) throws NotFoundException {
         // do some magic!
@@ -96,9 +126,12 @@ public class UserApiServiceImpl extends UserApiService {
     }
     @Override
     public Response updateUser(String username, User body, SecurityContext securityContext) throws NotFoundException {
-       	String query = "UPDATE Actor SET Username = ?, FirstName = ?, LastName = ?, Email = ?, Phone = ?, Password = ? where UserId = ?"; 
-    	try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement preparedStmt = conn.prepareStatement(query)){
+       	String query = "UPDATE Actor SET Username = ?, FirstName = ?, LastName = ?, Email = ?, Phone = ?, Password = ? where UserId = ?";
+       	User usr = new User();
+       	assert body.getId() != null;
+       	assert username != null;
+       	Connection conn = ConnectionManager.getConnection();
+    	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
 		    preparedStmt.setString(1, body.getUsername());
 		    preparedStmt.setString(2, body.getFirstName());
 		    preparedStmt.setString(3, body.getLastName());
@@ -110,7 +143,10 @@ public class UserApiServiceImpl extends UserApiService {
 	    	}catch (SQLException e) {
 		        e.printStackTrace();
 			}
-	    	return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "User updated!")).build();
+    	assert body.getFirstName() != null;
+    	assert body.getLastName() != null;
+    	assert body.getUsername() != null;
+    	return Response.ok().entity(usr).build();
 		}
 
 }

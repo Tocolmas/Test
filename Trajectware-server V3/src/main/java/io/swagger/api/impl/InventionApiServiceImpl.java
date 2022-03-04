@@ -46,15 +46,15 @@ public class InventionApiServiceImpl extends InventionApiService {
     }
 	@Override
     public Response addInvention(Invention body, SecurityContext securityContext) throws NotFoundException {
-		long id=ConnectionManager.createId("Invention");
-        body.setId(id);
-    	String query = "INSERT INTO Invention(Name, EntityId, Status, Startdate, Finsihdate) VALUES(?,?,?,?,?)";
+    	  String query = "INSERT INTO Invention(Name, EntityId, Status, Startdate, Finsihdate) VALUES(?,?,?,?,?)";
         assert body.getName() == null;
         assert body.getId() == null;
         assert body.getStartdate() == null;
         assert body.getFinsihdate() == null;
         assert body.getStatus() == null;
     	Connection conn = ConnectionManager.getConnection();
+			long id=ConnectionManager.createId("Invention");
+			body.setId(id);
  	    try (PreparedStatement pstmt = conn.prepareStatement(query)) {
  	        pstmt.setString(1, body.getName());
  	        pstmt.setString(2, body.getStatus());

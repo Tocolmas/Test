@@ -321,8 +321,11 @@ public class InventorApiServiceImpl extends InventorApiService {
             builder.entity(ConnectionManager.buildException(e));
             return builder.build();
 		}
-        checkValidDate(inventor.getBirthdate());
-        checkValidDate(inventor.getDeathdate());
+			assert inventor.getBirthdate() != null;
+			assert inventor.getFirstname() != null;
+			assert inventor.getName() != null;
+      checkValidDate(inventor.getBirthdate());
+      checkValidDate(inventor.getDeathdate());
     	return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Inventor found!")).build();
 	}
 

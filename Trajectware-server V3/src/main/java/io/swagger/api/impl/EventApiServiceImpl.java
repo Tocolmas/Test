@@ -236,9 +236,24 @@ public class EventApiServiceImpl extends EventApiService {
 	    }
     @Override
     public Response updateEventWithForm(Long eventId, String name, String status, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
+			String query = "UPDATE Event SET Name = ?, Status = ? where EntityId = ?";
+	    	assert eventId != null;
+	    	assert name != null;
+	    	assert status != null;
+	    	Connection conn = DBManager.getConnection();
+	    	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
+	    		preparedStmt.setString(1, name);
+	    		preparedStmt.setString(2, status);
+			    preparedStmt.executeUpdate();
+			    preparedStmt.close();
+	    	}catch (SQLException e) {
+		        e.printStackTrace();
+		        ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
+	            builder.entity(DBManager.buildException(e));
+	            return builder.build();
+			}
+	    	return Response.ok().entity(eventId).build();
+	    }
     @Override
     public Response updateevent(Event events, SecurityContext securityContext) throws NotFoundException {
     	String query = "UPDATE Event SET Name = ?, Startdate = ?, Enddate = ?, Status = ? WHERE EventId = ?";

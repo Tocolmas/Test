@@ -18,12 +18,23 @@ import io.swagger.model.Event;
 import io.swagger.model.Inventor;
 
 public class TestEvent {
-	
+
 	@BeforeClass
 	public static void cleanDB() {
-		
-		System.out.println("ICI JE DOIS VIDER MA DB");
-	}
+		public static void cleanDB() {
+			String query = "DELETE FROM Inventor";
+		    Connection conn = ConnectionManager.getConnection();
+
+			try {PreparedStatement pstmt = conn.prepareStatement(query);
+				pstmt.executeUpdate();
+		  	    pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+		}
 
 	@Test
 	public void findbyName() throws NotFoundException {
@@ -42,9 +53,9 @@ public class TestEvent {
 	    assertEquals(eve1.getName(),eve2.getName());
 	    assertEquals(eve1.getStartdate(), eve2.getStartdate());
 	    assertEquals(eve1.getEnddate(), eve2.getEnddate());
-	    assertEquals(eve1.getStatus(), eve2.getStatus());   
+	    assertEquals(eve1.getStatus(), eve2.getStatus());
 	}
-	
+
 	@Test
 	public void findbyDate() throws NotFoundException {
 		Event eve3 = new Event ();
@@ -60,9 +71,9 @@ public class TestEvent {
 	    Event eve4=(Event)res.getEntity();
 	    assertEquals(eve3.getStartdate(),eve4.getStartdate());
 
-		
+
 	}
-	
+
 	@Test
 	public void deleteEvent() throws NotFoundException {
 		Event eve5=new Event();
@@ -80,9 +91,9 @@ public class TestEvent {
 	    //Inventor inv2=(Inventor)res.getEntity();
 	}
 
-	
+
 	@Test
-	public void updateUser() throws NotFoundException {	
+	public void updateUser() throws NotFoundException {
 		Event eve6=new Event();
 		eve6.setName("premier jeux vidéos");
 		eve6.setStartdate("1985");
@@ -95,8 +106,8 @@ public class TestEvent {
 	    System.out.println(res.getEntity());
 	    System.out.println(eve6);
 	    assertEquals(eve6.getName(), eve6.getName());
-	} 
-	
+	}
+
 	@Test
 	public void findbyId() throws NotFoundException {
 		Event eve2 = new Event();
@@ -106,13 +117,12 @@ public class TestEvent {
 		eve2.setId(2L);
 		EventApiService api=EventApiServiceFactory.getEventApi();
 	    Response res=api.addevent(eve2, null);
-	    assertEquals(res.getStatus(),200);	
+	    assertEquals(res.getStatus(),200);
 	    res=api.getEventById(eve2.getId(), null);
 	    System.out.println(res.getEntity());
 	    Event eve9=(Event)res.getEntity();
 	    assertEquals(eve2.getId(),eve9.getId());
 	}
-	
-	
-}
 
+
+}

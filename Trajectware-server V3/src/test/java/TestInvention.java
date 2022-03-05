@@ -18,13 +18,22 @@ import io.swagger.model.Invention;
 import io.swagger.model.Inventor;
 
 public class TestInvention {
-	
+
 	@BeforeClass
 	public static void cleanDB() {
-		
-		System.out.println("ICI JE DOIS VIDER MA DB");
-	}
+		String query = "DELETE FROM Invention";
+	    Connection conn = ConnectionManager.getConnection();
 
+		try {PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.executeUpdate();
+	  	    pstmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+	}
 	@Test
 	public void findbyName() throws NotFoundException {
 		Invention inv1=new Invention();
@@ -34,7 +43,7 @@ public class TestInvention {
 		inv1.setFinsihdate("");
 		inv1.setStatus("en cours");
 	    System.out.println(inv1);
-	    
+
 		InventionApiService api=InventionApiServiceFactory.getInventionApi();
 	    Response res=api.addInvention(inv1, null);
 	    assertEquals(res.getStatus(),200);
@@ -46,7 +55,7 @@ public class TestInvention {
 	    assertEquals(inv1.getFinsihdate(), inv2.getFinsihdate());
 	    assertEquals(inv1.getStatus(), inv2.getStatus());
 	}
-	
+
 	@Test
 	public void findbyDate() throws NotFoundException {
 		Invention inv3 = new Invention();
@@ -64,7 +73,7 @@ public class TestInvention {
 	    Invention inv4=(Invention)res.getEntity();
 	    assertEquals(inv3.getStartdate(),inv4.getStartdate());
 	}
-	
+
 	@Test
 	public void deleteInvention() throws NotFoundException {
 		Invention inv5=new Invention();
@@ -85,7 +94,7 @@ public class TestInvention {
 
 	@Test
 	public void updateInvention() throws NotFoundException {
-		
+
 		Invention inv1=new Invention();
 		inv1.setName("Jones");
 		inv1.setStartdate("1985");
@@ -99,7 +108,7 @@ public class TestInvention {
 	    System.out.println(res.getEntity());
 	    System.out.println(inv1);
 	    assertEquals(inv1.getName(), inv1.getName());
-	} 
+	}
 
 	@Test
 	public void testPhoto() throws NotFoundException, FileNotFoundException {
@@ -112,13 +121,13 @@ public class TestInvention {
 		InventionApiService api=InventionApiServiceFactory.getInventionApi();
 	    Response res=api.addInvention(inv5, null);
 	    System.out.println(res.getEntity());
-	    
+
 	    File file=new File("testimg","Bill_Gates.jpg");
 	    FileInputStream fin=new FileInputStream(file);
 		api=InventionApiServiceFactory.getInventionApi();
 	    res=api.uploadFile(inv5.getId(), null, fin, null, null);
 	}
-	
+
 	@Test
 	public void findbyStatus() throws NotFoundException {
 		Invention inv6=new Invention();
@@ -127,10 +136,10 @@ public class TestInvention {
 		inv6.setFinsihdate("");
 		inv6.setId(inv6.getId());
 		inv6.setStatus("en cours");
-		
+
 		InventionApiService api=InventionApiServiceFactory.getInventionApi();
 	    Response res=api.addInvention(inv6, null);
-	    assertEquals(res.getStatus(),200);	
+	    assertEquals(res.getStatus(),200);
 	    res=api.findInventionsByStatus("en cours", null);
 	    System.out.println(res.getEntity());
 	    Invention inv8=(Invention)res.getEntity();
@@ -146,13 +155,13 @@ public class TestInvention {
 		inv7.setStatus("en cours");
 		InventionApiService api=InventionApiServiceFactory.getInventionApi();
 	    Response res=api.addInvention(inv7, null);
-	    assertEquals(res.getStatus(),200);	
+	    assertEquals(res.getStatus(),200);
 	    res=api.getInventionById(inv7.getId(), null);
 	    System.out.println(res.getEntity());
 	    Invention inv8=(Invention)res.getEntity();
 	    assertEquals(inv7.getId(), inv8.getId());
 	}
-	
+
 	@Test
 	public void add() throws NotFoundException {
 		Inventor inv7=new Inventor();
@@ -169,6 +178,5 @@ public class TestInvention {
 	    System.out.println(res.getEntity());
 	    System.out.println(inv7);
 	}
-	
-}
 
+}

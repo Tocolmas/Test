@@ -172,7 +172,7 @@ public class TestInvention {
 		Invention inv7=new Invention();
 		inv7.setName("Poles");
 		inv7.setStartdate("1940");
-		inv7.setEnddate("2015");
+		inv7.setFinsihdate("2015");
 		inv7.setId(3L);
 		inv7.setStatus("mort");
 		InventionApiService api=InventionApiServiceFactory.getInventionByIdApi();

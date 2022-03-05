@@ -331,8 +331,23 @@ public class InventorApiServiceImpl extends InventorApiService {
 
     @Override
     public Response updateInventorWithForm(Long inventorId, String name, String status, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+			String query = "UPDATE Inventor SET Name = ?, Status = ? where EntityId = ?";
+    	assert inventorId != null;
+    	assert name != null;
+    	assert status != null;
+    	Connection conn = DBManager.getConnection();
+    	try (PreparedStatement preparedStmt = conn.prepareStatement(query)){
+    		preparedStmt.setString(1, name);
+    		preparedStmt.setString(2, status);
+		    preparedStmt.executeUpdate();
+		    preparedStmt.close();
+    	}catch (SQLException e) {
+	        e.printStackTrace();
+	        ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
+            builder.entity(DBManager.buildException(e));
+            return builder.build();
+		}
+    	return Response.ok().entity(inventorId).build();
     }
     @Override
     public Response uploadImage(Long inventorId, String additionalMetadata, InputStream fileInputStream, FormDataContentDisposition fileDetail, SecurityContext securityContext) throws NotFoundException {

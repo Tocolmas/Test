@@ -175,7 +175,7 @@ public class TestInvention {
 		inv7.setFinsihdate("2015");
 		inv7.setId(3L);
 		inv7.setStatus("mort");
-		InventionApiService api=InventionApiServiceFactory.getInventionByIdApi();
+		InventionApiService api=InventionApiServiceFactory.getInventionApi();
 	    Response res=api.addInvention(inv7, null);
 	    assertEquals(res.getStatus(),200);
 	    res=api.addInvention(inv7, null);

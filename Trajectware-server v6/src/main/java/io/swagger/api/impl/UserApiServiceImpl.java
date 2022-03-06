@@ -24,7 +24,7 @@ import javax.validation.constraints.*;
 public class UserApiServiceImpl extends UserApiService {
 	@Override
 	public Response adduser(User body, SecurityContext securityContext) throws NotFoundException {
-		String query = "INSERT INTO User(Username, UserId, FirstName, LastName, Email, Phone, Password) VALUES(?,?,?,?,?,?;?)";
+		String query = "INSERT INTO User(Username, UserId, FirstName, LastName, Email, Phone, Password) VALUES(?,?,?,?,?,?,?)";
 		// connection to the DB
 		Connection conn = DBManager.getConnection();
 		// call the function createId, to generate the Id
@@ -128,7 +128,7 @@ public class UserApiServiceImpl extends UserApiService {
 			return builder.build();
 		}
 		return Response.ok().entity(status).build();
-	
+
 	}
 
 	@Override

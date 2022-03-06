@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -155,7 +154,7 @@ public class InventionApiServiceImpl extends InventionApiService {
 
 	@Override
 	public Response findInventionBysByTags(@NotNull List<String> tags, String date, SecurityContext securityContext) throws NotFoundException {
-		// no need to verify that the List<String> is not null, because we have it verify in the parameters of the method 
+		// no need to verify that the List<String> is not null, because we have it verify in the parameters of the method
 		String query = "SELECT Name, EntityId, Status, Startdate, Finsihdate FROM Invention WHERE EntityId = ?";
 		Invention inv = new Invention();
 		// connection to the DB
@@ -181,7 +180,7 @@ public class InventionApiServiceImpl extends InventionApiService {
 
 	@Override
 	public Response findInventionsByName(@NotNull String name, SecurityContext securityContext) throws NotFoundException {
-		// no need to verify that the name given in argument is not null, because we have it verify in the parameters of the method 
+		// no need to verify that the name given in argument is not null, because we have it verify in the parameters of the method
 		String query = "SELECT Name, EntityId, Status, Startdate, Finsihdate from Invention WHERE Name = ?";
 		Invention inv = new Invention();
 		// connection to the DB
@@ -209,7 +208,7 @@ public class InventionApiServiceImpl extends InventionApiService {
 
 	@Override
 	public Response findInventionsByStatus(@NotNull String status, SecurityContext securityContext) throws NotFoundException {
-		// no need to verify that the status given in argument is not null, because we have it verify in the parameters of the method 
+		// no need to verify that the status given in argument is not null, because we have it verify in the parameters of the method
 		String query = "SELECT Name, EntityId, Status, Startdate, Finsihdate FROM Invention WHERE Status = ?";
 		Invention inv = new Invention();
 		// connection to the DB
